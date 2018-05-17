@@ -1,4 +1,9 @@
-
+#Universidad del valle de Guatemala
+#Algoritmos y estructura de datos, seccion:10
+#Hoja de trabajo 10 - utilizando neo4J y creando recomendaciones
+#Maria Fernanda Lopez - 17160
+#Ana Lucia Hernandez  - 17138
+#Andrea Carolina Arguello - 175
 
 from neo4jrestclient.client import GraphDatabase
 from neo4jrestclient import client
@@ -35,6 +40,30 @@ def relacionPM(paciente, medicina):
 
 def relacionDM(doctor, medicina):
     doctor.relationships.create("PRESCRIBE", medicina)
+
+def relacionPP(paciente, paciente):
+    paciente.relationships.create("CONOCEP", paciente)
+
+#Esta relacion va a servir para la segunda recomendacion
+def relacionDD(doctor, doctor):
+    paciente.relationships.create("CONOCED", doctor)
+
+#funcion que retorna todos los doctores que tienen cierta especialidad
+def queryEsp(especialidad):
+    q = 'MATCH (d:Doctor) WHERE d.especialidad = "+ especialidad +" RETURN d'
+    # q = 'MATCH (d:Doctor { Epecialidad: especialidad } RETURN d)'
+    resultados = db.query(q, returns=(client.Node, str, client.Node)
+    for r in resultados:
+        print("(%s)" % ("name"))
+
+#funcion para la recomendacion de doctores que conocen a cierto doctor, espero que este correcto vi dos sintaxis distintas 
+def recomendacionDoc(especialidad, nombre):
+    q = 'MATCH (d:Doctor) WHERE d.especialidad = " + especialidad +" and d.nombre = "+ nombre +" and Doctor-[:CONOCED]->(d) RETURN d, d'
+    resultados = db.query(q, returns=(client.Node, str, client.Node)
+    for r in resultados:
+        print("(%s)" % (r[0]["nombre"]))
+                        
+                          
 
 relacionDP(add_Paciente("Pedro", "8349201", "121212"), add_Doctor("Juan", "7439201", "895315", "Internista"))
 
