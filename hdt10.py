@@ -41,12 +41,12 @@ def relacionPM(paciente, medicina):
 def relacionDM(doctor, medicina):
     doctor.relationships.create("PRESCRIBE", medicina)
 
-def relacionPP(paciente, paciente):
-    paciente.relationships.create("CONOCEP", paciente)
+def relacionPP(paciente, paciente1):
+    paciente.relationships.create("CONOCEP", paciente1)
 
 #Esta relacion va a servir para la segunda recomendacion
-def relacionDD(doctor, doctor):
-    paciente.relationships.create("CONOCED", doctor)
+def relacionDD(doctor, doctor1):
+    paciente.relationships.create("CONOCED", doctor1)
 
 #funcion que retorna todos los doctores que tienen cierta especialidad
 def queryEsp(especialidad):
