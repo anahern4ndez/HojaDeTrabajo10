@@ -45,9 +45,7 @@ while(ciclo==0):
         #hacer query para devolver paciente y guardar en variable pac
         #hacer query para devolver doctor y guardar en variable doc
         #hacer query para la medicina recien ingresada y guardarla en med
-        #relacionDP(pac,doc,fecha)
-        #relacionPM(pac,med)
-        #relacionDM(doc,med)
+           
         ciclo = 0
     elif(entrada=="4"):
         esp = raw_input("Ingrese la especialidad que desea buscar: ")
