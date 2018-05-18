@@ -14,8 +14,8 @@ while(ciclo==0):
     
     print ('\nQue desea hacer? \n>>1. Ingresar un doctor \n>>2. Ingresar un paciente \n>>3. Ingresar visita de un paciente a un doctor \n>>4. Consultar doctores por especialidad \n>>5. Ingresar relacion entre personas \n>>6. Salir')
 
-    entrada= raw_input()
-    print "\nUsted ingreso: ", entrada,"\n"
+    entrada= raw_input(">>")
+    print "\n**Usted ingreso: ", entrada,"**\n"
 
 
 
@@ -41,24 +41,37 @@ while(ciclo==0):
         desde = raw_input("La tomara desde: ")
         hasta = raw_input("La tomara hasta: ")
         dosis = raw_input("Ingrese la dosis a tomar: ")
-        add_Medicina(medicina,desde,hasta,dosis)
-        #hacer query para devolver paciente y guardar en variable pac
-        #hacer query para devolver doctor y guardar en variable doc
-        #hacer query para la medicina recien ingresada y guardarla en med
-           
+        registrarVisita(paciente,doctor,fecha,medicina,desde,hasta,dosis)
         ciclo = 0
     elif(entrada=="4"):
         esp = raw_input("Ingrese la especialidad que desea buscar: ")
         queryEsp(esp)
         ciclo = 0
     elif(entrada=="5"):
-        persona1 = raw_input("Ingrese la primera persona a relacionar: ")
-        persona2 = raw_input("Ingrese la segunda persona a relacionar: ")
-        #hacer queries con ambos y crear la relacion
-        #relacionPP(p1,p2)
-        ciclo = 0
+        newciclo=0
+        while (newciclo==0):
+            opcion=raw_input("Son las personas:\n>>1. Doctor y Doctor\n>>2. Doctor y paciente\n>>3. Paciente y paciente\n>>")
+            if(opcion!="1" and opcion!="2" and opcion!="3"):
+                print "Ingrese una opcion valida"
+                newciclo=0
+            else:
+                if(opcion=="1"):
+                    persona1 = raw_input("Ingrese el primer doctor a relacionar: ")
+                    persona2 = raw_input("Ingrese el segundo doctor a relacionar: ")
+                    relacionDD(persona1,persona2)
+                    ciclo = 0
+                elif(opcion=="2"):
+                    persona1 = raw_input("Ingrese el doctor a relacionar: ")
+                    persona2 = raw_input("Ingrese el paciente a relacionar: ")
+                    relacionDP(persona1,persona2)
+                    ciclo = 0
+                elif(opcion=="3"):
+                    persona1 = raw_input("Ingrese el primer paciente a relacionar: ")
+                    persona2 = raw_input("Ingrese el segundo paciente a relacionar: ")
+                    relacionPP(persona1,persona2)
+                    ciclo = 0
     elif(entrada=="6"):
-        getConocidosPa("Maria")
+        getConocidosPa("Juan")
  #       print "Feliz dia"
         ciclo = 0
     else:

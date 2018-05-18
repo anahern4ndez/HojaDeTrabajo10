@@ -38,11 +38,16 @@ def add_Medicina(nombre, desdeFecha, hastaFecha, dosis):
     return m
     print ("\n¡Medicina agregada!")
 
+def registrarVisita(paciente,doctor,fecha,medicina,desde,hasta,dosis):
+    med=add_Medicina(medicina,desde,hasta,dosis)
+    visitaDP(paciente,doctor,fecha)
+    relacionPM(paciente,med)
+    relacionDM(doctor,med)
+
 # ------------ CREACION RELACIONES ---------------
-def relacionDP(paciente, doctor, fecha):
+def visitaDP(paciente, doctor, fecha):
     paciente.relationships.create("FECHA", doctor)
-    q = 'MATCH ('paciente')-[r:CONOCE]->('doctor') SET r.Fecha =\"'+fecha+'\" RETURN r'
-    
+    #q = 'MATCH ("'+paciente+'")-[r:CONOCE]->("'+doctor+'") SET r.Fecha =\"'+fecha+'\" RETURN r'    
 
 def relacionPM(paciente, medicina):
     paciente.relationships.create("TOMA", medicina)
@@ -53,11 +58,15 @@ def relacionDM(doctor, medicina):
 def relacionPP(paciente, paciente1):
     paciente.relationships.create("CONOCE", paciente1)
 
+def relacionDP(doctor, paciente1):
+    paciente1.relationships.create("CONOCE", doctor)
+    
+
 # ------------ QUERYS ---------------
 
 #Esta relacion va a servir para la segunda recomendacion
 def relacionDD(doctor, doctor1):
-    paciente.relationships.create("CONOCE", doctor1)
+    doctor.relationships.create("CONOCE", doctor1)
 
 #funcion que retorna todos los doctores que tienen cierta especialidad
 def queryEsp(especialidad):
