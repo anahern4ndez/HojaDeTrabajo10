@@ -58,12 +58,9 @@ def queryEsp(especialidad):
 
 #funcion para la recomendacion de doctores que conocen a cierto doctor, espero que este correcto vi dos sintaxis distintas 
 def recomendacionDoc(especialidad, nombre):
-    q = 'MATCH (d:Doctor) WHERE d.especialidad = " + especialidad +" and d.nombre = "+ nombre +" and Doctor-[:CONOCED]->(d) RETURN d, d'
+    q = 'MATCH (d:Doctor) WHERE d.especialidad = " + especialidad +" and d.nombre = "+ nombre +" and Doctor-[:CONOCE]->(d) RETURN d, d'
     resultados = db.query(q, returns=(client.Node, str, client.Node))
     for r in resultados:
         print("(%s)" % (d[0]["nombre"]))
                         
-                          
-
-relacionDP(add_Paciente("Pedro", "8349201", "121212"), add_Doctor("Juan", "7439201", "895315", "Internista"))
 
