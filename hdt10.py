@@ -19,6 +19,7 @@ pacientes = driver.labels.create("Paciente")
 doctores = driver.labels.create("Doctor")
 medicinas = driver.labels.create("Medicinas")
 
+# ------------ CREACION NODOS ---------------
 def add_Paciente(nombre, telefono):
     p1 = driver.nodes.create(Nombre=nombre, Telefono=telefono)
     pacientes.add(p1)
@@ -37,8 +38,11 @@ def add_Medicina(nombre, desdeFecha, hastaFecha, dosis):
     return m
     print ("\n¡Medicina agregada!")
 
+# ------------ CREACION RELACIONES ---------------
 def relacionDP(paciente, doctor, fecha):
-    paciente.relationships.create("FECHAV %s" %fecha, doctor)
+    paciente.relationships.create("FECHA", doctor)
+    q = 'MATCH ('paciente')-[r:CONOCE]->('doctor') SET r.Fecha =\"'+fecha+'\" RETURN r'
+    
 
 def relacionPM(paciente, medicina):
     paciente.relationships.create("TOMA", medicina)
@@ -47,58 +51,36 @@ def relacionDM(doctor, medicina):
     doctor.relationships.create("PRESCRIBE", medicina)
 
 def relacionPP(paciente, paciente1):
-    paciente.relationships.create("CONOCEP", paciente1)
+    paciente.relationships.create("CONOCE", paciente1)
+
+# ------------ QUERYS ---------------
 
 #Esta relacion va a servir para la segunda recomendacion
 def relacionDD(doctor, doctor1):
-    paciente.relationships.create("CONOCED", doctor1)
+    paciente.relationships.create("CONOCE", doctor1)
 
 #funcion que retorna todos los doctores que tienen cierta especialidad
 def queryEsp(especialidad):
-    q = 'MATCH (u:Doctor) WHERE u.especialidad = "+ especialidad +" RETURN u'
-    # q = 'MATCH (d:Doctor { Epecialidad: especialidad } RETURN d)'
+    q = 'MATCH (u:Doctor) WHERE u.Especialidad = \"'+ especialidad +'\" RETURN u'
     resultados = driver.query(q, returns=(client.Node))
-    for r in resultados:
-        print("%s" % (r[0]["Nombre"]))
+    if len(resultados) ==0:
+        print("\nNo hay doctores con esa especialidad")
+    else:
+        for r in resultados:
+            print("--> %s" % (r[0]["Nombre"]))
 
 #obtiene una lista con los conocidos de los conocidos del paciente
 def getConocidosPa(nombrePa):
-    q = 'MATCH (u:Paciente)-[r:CONOCEP]->(m:Paciente) WHERE u.Nombre=" '+ nombrePa +'" RETURN u, type(r), m'
+    conocidosL=[]
+    q = 'MATCH (u:Paciente)-[r:CONOCE]->(m:Paciente) WHERE u.Nombre=\"'+ nombrePa +'\" RETURN u, type(r), m'
     conocidos = driver.query(q, returns=(client.Node, str, client.Node))
-    
-    lista=[]
-    conocidos2=[]    
-    
-    for r in conocidos:
-        conocidos2.append(r[2]["Nombre"])    #probe con otros numero adentro del [] pero realmente no se si ese hay que cambiarlo o que
-        lista.append(r[2]["Nombre"])
-        
-
-    for i in lista:
-        q = 'MATCH (u:Paciente)-[r:Knows]->(m:Paciente) WHERE u.Nombre="'+i+'" RETURN u, type(r), m'
-        conocidos = driver.query(q, returns=(client.Node, str, client.Node))
-
-        for r in conocidos:
-            conocidos2.append(r[2]["Nombre"])
-
-    return conocidos2
-
-#obtiene una lista con los doctores que tienen esta especialidad
-def getDocsEsp(especialidad):
-    q = 'MATCH (u:Doctores) WHERE u.Especialidad = "'+especialidad+'" RETURN u'
-    especiales = driver.query(q, returns=(client.Node))
-
-    cont = 0
-    lista = []
-
-    for r in especiales:
-        cont += 1
-        lista.append(r[0]["Nombre"])
-
-    if(cont==0):
-        print("\nNo hay doctores con esa especialidad")
+    if len(conocidos) ==0:
+        print("\n La persona que ingreso no tiene conocidos :(")
     else:
-        return lista
+        for r in conocidos:
+            conocidosL.append(r[2]["Nombre"])
+        return conocidos
+    
 
 #paciente es el nombre del paciente del cual se va a empezar a buscar
 #en esta si no estoy mal hace falta comparar que esos doctores que son el resultado
@@ -112,7 +94,7 @@ def recomendacionPinche1(paciente, especialidad):
     listConocidos = getConocidosPa(paciente)
 
     for i in listConocidos:
-        w = 'MATCH (u:Paciente)-[r:FECHAV]->(m:Doctor) WHERE u.Nombre="'+i+'" RETURN u, type(r), m'
+        w = 'MATCH (u:Paciente)-[r:FECHA]->(m:Doctor) WHERE u.Nombre="'+ i +'" RETURN u, type(r), m'
         doctores = driver.query(q, returns=(client.Node, str, client.Node))
         
         
@@ -120,7 +102,7 @@ def recomendacionPinche1(paciente, especialidad):
 
 #funcion para la recomendacion de doctores que conocen a cierto doctor, espero que este correcto vi dos sintaxis distintas 
 def recomendacionDoc(especialidad, nombre):
-    q = 'MATCH (u:Doctor)-[r:CONOCED]->(m:Doctor) WHERE u.Especialidad = " '+ especialidad +'" AND u.Nombre = "'+ nombre +'" RETURN u, type(r), m'
+    q = 'MATCH (u:Doctor)-[r:CONOCE]->(m:Doctor) WHERE u.Especialidad = " '+ especialidad +'" AND u.Nombre = "'+ nombre +'" RETURN u, type(r), m'
     resultados = driver.query(q, returns=(client.Node, str, client.Node))
 
     if(not resultados):

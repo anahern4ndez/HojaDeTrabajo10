@@ -12,7 +12,7 @@ from hdt10 import *
 ciclo = 0
 while(ciclo==0):
     
-    print ('Que desea hacer? \n>>1. Ingresar un doctor \n>>2. Ingresar un paciente \n>>3. Ingresar visita de un paciente a un doctor \n>>4. Consultar doctores por especialidad \n>>5. Ingresar relacion entre personas \n>>6. Salir')
+    print ('\nQue desea hacer? \n>>1. Ingresar un doctor \n>>2. Ingresar un paciente \n>>3. Ingresar visita de un paciente a un doctor \n>>4. Consultar doctores por especialidad \n>>5. Ingresar relacion entre personas \n>>6. Salir')
 
     entrada= raw_input()
     print "\nUsted ingreso: ", entrada,"\n"
@@ -58,8 +58,9 @@ while(ciclo==0):
         #relacionPP(p1,p2)
         ciclo = 0
     elif(entrada=="6"):
-        print "Feliz dia"
-        ciclo = 1
+        getConocidosPa("Maria")
+ #       print "Feliz dia"
+        ciclo = 0
     else:
         print "Ingrese una opcion valida\n"
         ciclo = 0
