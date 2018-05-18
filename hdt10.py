@@ -120,7 +120,6 @@ def recomendacionPinche1(paciente, especialidad):
 
 #funcion para la recomendacion de doctores que conocen a cierto doctor, espero que este correcto vi dos sintaxis distintas 
 def recomendacionDoc(especialidad, nombre):
-<<<<<<< HEAD
     q = 'MATCH (u:Doctor)-[r:CONOCED]->(m:Doctor) WHERE u.Especialidad = " '+ especialidad +'" AND u.Nombre = "'+ nombre +'" RETURN u, type(r), m'
     resultados = driver.query(q, returns=(client.Node, str, client.Node))
 
@@ -133,21 +132,10 @@ def recomendacionDoc(especialidad, nombre):
             print("%s, telefono: %s" % (r[0]["Nombre"],r[0]["Telefono"]))   #espero que funcione asi con el [0] porque me base en el link de marco pero no estoy muy segura que sea ese indice que le mete alli
             z = r[0]["Nombre"]
 
-    #Esta segunda query es para los doctores conocidos de los conocidos
-    s = 'MATCH (u:Doctor)-[r:CONOCED]->(m:Doctor) WHERE u.Especialidad = " '+ especialidad +'" AND u.Nombre = "'+ nombre +'" RETURN u, type(r), m'
-    resultados2 = driver.query(s, returns=(client.Node, str, client.Node))
+        #Esta segunda query es para los doctores conocidos de los conocidos
+        s = 'MATCH (u:Doctor)-[r:CONOCED]->(m:Doctor) WHERE u.Especialidad = " '+ especialidad +'" AND u.Nombre = "'+ nombre +'" RETURN u, type(r), m'
+        resultados2 = driver.query(s, returns=(client.Node, str, client.Node))
 
-    for i in resultados2:
-        if (z != i[0]["Nombre"]):
-            print("%s, telefono: %s" % (i[0]["Nombre"], i[0]["Telefono"])  #igual aqui no se si ese indice deberia de cambiar o como 
-                        
-                          
-
-#relacionDP(add_Paciente("Pedro", "8349201", "121212"), add_Doctor("Juan", "7439201", "895315", "Internista"))
-=======
-    q = 'MATCH (d:Doctor) WHERE d.especialidad = " + especialidad +" and d.nombre = "+ nombre +" and Doctor-[:CONOCE]->(d) RETURN d, d'
-    resultados = db.query(q, returns=(client.Node, str, client.Node))
-    for r in resultados:
-        print("(%s)" % (d[0]["nombre"]))
->>>>>>> d23037791388201fb2bb9bbe34a67ad2c7d61ca6
-
+        for i in resultados2:
+            if (z != i[0]["Nombre"]):
+                print("%s, telefono: %s" % (i[0]["Nombre"], i[0]["Telefono"]))
