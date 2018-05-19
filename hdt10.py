@@ -62,11 +62,13 @@ def relacionDP(doctor, paciente1):
     paciente1.relationships.create("CONOCE", doctor)
     
 
-# ------------ QUERYS ---------------
+
 
 #Esta relacion va a servir para la segunda recomendacion
 def relacionDD(doctor, doctor1):
     doctor.relationships.create("CONOCE", doctor1)
+
+# ------------ QUERYS ---------------
 
 #funcion que retorna todos los doctores que tienen cierta especialidad
 def queryEsp(especialidad):
