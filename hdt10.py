@@ -149,12 +149,6 @@ def getConocidosPa(nombrePa):
         return conocidosL
     
 
-#paciente es el nombre del paciente del cual se va a empezar a buscar
-#en esta si no estoy mal hace falta comparar que esos doctores que son el resultado
-#sean iguales a los doctores que tenien la especialidad que se busca
-#lo que hice fue buscar al paciente que se pide y de alli jalar sus conocidos para despues
-#buscar las relaciones de visitas a doctores por cada uno de estos conocidos
-
 
 # ---------------- RECOMENDACIONES ----------------------
 def recomendacionConocidosPaciente(nombrePa, especialidad):   
@@ -202,7 +196,7 @@ def recomendacionConocidosPaciente(nombrePa, especialidad):
         
 #funcion para la recomendacion de doctores que conocen a cierto doctor
 def recomendacionConocidosDoctor(especialidad, nombre):
-    z = ""
+    
     q = 'MATCH (u:Doctor)-[r:CONOCE]->(m:Doctor) WHERE u.Especialidad = \"'+ especialidad +'\" AND u.Nombre = \"'+ nombre +'\" RETURN u, type(r), m'
     resultados = driver.query(q, returns=(client.Node, str, client.Node))
 
@@ -210,15 +204,16 @@ def recomendacionConocidosDoctor(especialidad, nombre):
         print("El doctor no se encuentra en la base de datos o no hay relacion entre doctores o la especialidad que ingreso es incorrecta")
     else :
         print("\nLos doctores recomendados son:")
-        nombres = ""        
+        z = ""        
         for r in resultados:
-            print("%s, telefono: %s" % (r[0]["Nombre"],r[0]["Telefono"]))   #espero que funcione asi con el [0] porque me base en el link de marco pero no estoy muy segura que sea ese indice que le mete alli
-            z = r[0]["Nombre"]
+            x = z
+            print("%s, telefono: %s" % (r[2]["Nombre"],r[2]["Telefono"]))   #espero que funcione asi con el [0] porque me base en el link de marco pero no estoy muy segura que sea ese indice que le mete alli
+            z = r[2]["Nombre"]
 
-        #Esta segunda query es para los doctores conocidos de los conocidos
-        s = 'MATCH (u:Doctor)-[r:CONOCE]->(m:Doctor) WHERE u.Especialidad = \"'+ especialidad +'\" AND u.Nombre = \"'+ nombre +'\" RETURN u, type(r), m'
-        resultados2 = driver.query(s, returns=(client.Node, str, client.Node))
+            #Esta segunda query es para los doctores conocidos de los conocidos
+            s = 'MATCH (u:Doctor)-[r:CONOCE]->(m:Doctor) WHERE u.Especialidad = \"'+ especialidad +'\" AND u.Nombre = \"'+ z +'\" RETURN u, type(r), m'
+            resultados2 = driver.query(s, returns=(client.Node, str, client.Node))
 
-        for i in resultados2:
-            if (z != i[0]["Nombre"]):
-                print("%s, telefono: %s" % (i[0]["Nombre"], i[0]["Telefono"]))
+            for i in resultados2:
+                if (x != i[2]["Nombre"]):
+                    print("%s, telefono: %s" % (i[2]["Nombre"], i[2]["Telefono"]))
