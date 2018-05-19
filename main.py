@@ -12,7 +12,7 @@ from hdt10 import *
 ciclo = 0
 
 recomendacionDoc("Internista", "Juan")
-recomendacionPinche1("Ana", "Internista")
+recomendacionNuevoDoc("Maria", "Internista")
 while(ciclo==0):
     
     print ('\nQue desea hacer? \n>>1. Ingresar un doctor \n>>2. Ingresar un paciente \n>>3. Ingresar visita de un paciente a un doctor \n>>4. Consultar doctores por especialidad \n>>5. Ingresar relacion entre personas \n>>6. Salir')

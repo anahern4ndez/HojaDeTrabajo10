@@ -126,6 +126,7 @@ def relacionDD(doctor, doctor1):
 
 #funcion que retorna todos los doctores que tienen cierta especialidad
 def queryEsp(especialidad):
+    doctores = [] #nombres de los doctores
     q = 'MATCH (u:Doctor) WHERE u.Especialidad = \"'+ especialidad +'\" RETURN u'
     resultados = driver.query(q, returns=(client.Node))
     if len(resultados) ==0:
@@ -133,6 +134,8 @@ def queryEsp(especialidad):
     else:
         for r in resultados:
             print("--> %s" % (r[0]["Nombre"]))
+            doctores.append(r[0]["Nombre"])
+        return doctores
 
 #obtiene una lista con los conocidos de los conocidos del paciente
 def getConocidosPa(nombrePa):
@@ -144,7 +147,7 @@ def getConocidosPa(nombrePa):
     else:
         for r in conocidos:
             conocidosL.append(r[2]["Nombre"])
-        return conocidos
+        return conocidosL
     
 
 #paciente es el nombre del paciente del cual se va a empezar a buscar
@@ -152,34 +155,49 @@ def getConocidosPa(nombrePa):
 #sean iguales a los doctores que tenien la especialidad que se busca
 #lo que hice fue buscar al paciente que se pide y de alli jalar sus conocidos para despues
 #buscar las relaciones de visitas a doctores por cada uno de estos conocidos
-def recomendacionPinche1(paciente, especialidad):
-    conocidosDocs=[]
+
+
+def recomendacionNuevoDoc(nombrePa, especialidad):   
     z = ""
-    q = 'MATCH (u:Paciente) WHERE u.Nombre = "'+paciente+'" RETURN u'
-    paciente = driver.query(q, returns=(client.Node))
+    nodoPaciente = None
+    conocidos = [] #conocidos del doctor ingresado
+    doctores =[] #doctores que coinciden con una especialidad
+    conocidosDeConocidos =[] #personas que son conocidos de conocidos del doctor
+    recomendados =[] #doctores recomendados
+    q = 'MATCH (u:Paciente) WHERE u.Nombre = \"'+nombrePa+'\" RETURN u'
+    pacientes = driver.query(q, returns=(client.Node))
+    for p in pacientes:
+        nodoPaciente = p
     
-    listConocidos = getConocidosPa(paciente)
+    listConocidos = getConocidosPa(nombrePa) #String
+    doctores = queryEsp(especialidad) #String
 
-    for i in listConocidos:
-        w = 'MATCH (u:Paciente)-[r:VISITA]->(m:Doctor) WHERE u.Nombre=\"'+ i +'\" RETURN u, type(r), m'
-        doctores = driver.query(q, returns=(client.Node, str, client.Node))
-        for r in doctores:
-            z = r[0]["Nombre"]
-        s = 'MATCH (u:Paciente)-[r:VISITA]->(m:Doctor) WHERE u.Nombre=\"'+paciente+'\" RETURN u, type(r), m'
-        doctores2 = driver.query(s, returns=(client.Node, str, client.Node))
+    if (listConocidos != None):
+        for i in listConocidos:
+            w = 'MATCH (u:Paciente)-[r:CONOCE]->(m:Paciente) WHERE u.Nombre=\"'+ i +'\" RETURN m'
+            conocidos2 = driver.query(q, returns=(client.Node))
+            for cc in conocidos2:
+                conocidosDeConocidos.append(cc[0]["Nombre"]) #String
+        #Primero se hara el query de si a cada doctor de una especialidad, lo ha visitado alguno de los conocidos del paciente
+        for j in range(len(doctores)):
+            for i in range(len(conocidos)):
+                t = 'MATCH (u:Paciente)-[r:VISITA]->(m:Doctor) WHERE u.Nombre=\"'+ conocidos[i] +'\" AND m.Nombre=\"'+ doctores[j] +'\" RETURN u,m'
+                recomendados1 = driver.query(t, returns=(client.Node, client.Node))
+                for found in recomendados1:
+                    recomendados.append(found[1]["Nombre"])
 
-        for n in doctores2:
-            if(z != n[0]["Nombre"]):
-                conocidosDocs.append(n[0]["Nombre"])
-
-    for s in listConocidos:
-        if( conocidosDocs[s] == listConocidos[s]):
-            print("%s, telefono: %s" % (s[0]["Nombre"], s[0]["Telefono"]))            
+        #Luego se hara el query de si a cada doctor de una especialidad, lo ha visitado alguno de los conocidos de algun conocido del paciente
+        for j in range(len(doctores)):
+            for i in range(len(conocidosDeConocidos)):
+                t = 'MATCH (u:Paciente)-[r:VISITA]->(m:Doctor) WHERE u.Nombre=\"'+ conocidosDeConocidos[i] +'\" AND m.Nombre=\"'+ doctores[j] +'\" RETURN u,m'
+                recomendados1 = driver.query(t, returns=(client.Node, client.Node))
+                for found in recomendados1:
+                    recomendados.append(found[1]["Nombre"])
+        #Impresion de los doctores encontrados (aunque se repitan)
+        for s in recomendados:
+            print("Nombre del Doctor: %s" %(s))            
             
         
-        
-    
-
 #funcion para la recomendacion de doctores que conocen a cierto doctor, espero que este correcto vi dos sintaxis distintas 
 def recomendacionDoc(especialidad, nombre):
     z = ""
@@ -196,7 +214,7 @@ def recomendacionDoc(especialidad, nombre):
             z = r[0]["Nombre"]
 
         #Esta segunda query es para los doctores conocidos de los conocidos
-        s = 'MATCH (u:Doctor)-[r:CONOCED]->(m:Doctor) WHERE u.Especialidad = \"'+ especialidad +'\" AND u.Nombre = \"'+ nombre +'\" RETURN u, type(r), m'
+        s = 'MATCH (u:Doctor)-[r:CONOCE]->(m:Doctor) WHERE u.Especialidad = \"'+ especialidad +'\" AND u.Nombre = \"'+ nombre +'\" RETURN u, type(r), m'
         resultados2 = driver.query(s, returns=(client.Node, str, client.Node))
 
         for i in resultados2:
