@@ -11,11 +11,11 @@ from hdt10 import *
 
 ciclo = 0
 
-recomendacionConocidosDoctor("Internista", "Juan")
-recomendacionConocidosPaciente("Maria", "Internista")
+#recomendacionConocidosDoctor("Pediatra", "Esteban")
+#recomendacionConocidosPaciente("Pedro", "Oculista")
 while(ciclo==0):
     
-    print ('\nQue desea hacer? \n>>1. Ingresar un doctor \n>>2. Ingresar un paciente \n>>3. Ingresar visita de un paciente a un doctor \n>>4. Consultar doctores por especialidad \n>>5. Ingresar relacion entre personas \n>>6. Salir')
+    print ('\nQue desea hacer? \n>>1. Ingresar un doctor \n>>2. Ingresar un paciente \n>>3. Ingresar visita de un paciente a un doctor \n>>4. Consultar doctores por especialidad \n>>5. Ingresar relacion entre personas \n>>6. Buscar recomendacion del doctor para doctor con especialidad \n>>7. Buscar recomendacion de conocidos de doctor con especialidad \n>>8. Salir')
 
     entrada= raw_input(">>")
     print "\n**Usted ingreso: ", entrada,"**\n"
@@ -78,9 +78,18 @@ while(ciclo==0):
                     newciclo=1
                     ciclo = 0
     elif(entrada=="6"):
-        getConocidosPa("Juan")
- #       print "Feliz dia"
+        esp = raw_input("Ingrese la especialidad que desea buscar: ")
+        doc = raw_input("Ingrese el nombre del doctor que desea le haga la recomendacion: ")
+        recomendacionConocidosDoctor(esp, doc)
         ciclo = 0
+    elif(entrada=="7"):
+        esp = raw_input("Ingrese la especialidad que desea buscar: ")
+        pac = raw_input("Ingrese el nombre del paciente que desea le haga la recomendacion: ")
+        recomendacionConocidosPaciente(pac, esp)
+        ciclo = 0
+    elif(entrada=="8"):
+        print "Feliz dia"
+        ciclo = 1
     else:
         print "Ingrese una opcion valida\n"
         ciclo = 0
