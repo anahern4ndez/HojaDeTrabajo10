@@ -45,16 +45,19 @@ while(ciclo==0):
         hasta = raw_input("La tomara hasta: ")
         dosis = raw_input("Ingrese la dosis a tomar: ")
         registrarVisita(paciente,doctor,fecha,medicina,desde,hasta,dosis)
-        
+               
         ciclo = 0
     elif(entrada=="4"):
         esp = raw_input("Ingrese la especialidad que desea buscar: ")
-        queryEsp(esp)
+        listaDocs = queryEsp(esp)
+        print("\nDOCTORES QUE TIENEN LA ESPECIALIDAD DE "+esp.upper())
+        for i in listaDocs:
+            print("--> "+i)
         ciclo = 0
     elif(entrada=="5"):
         newciclo=0
         while (newciclo==0):
-            opcion=raw_input("Son las personas:\n>>1. Doctor y Doctor\n>>2. Doctor y paciente\n>>3. Paciente y paciente\n>>")
+            opcion=raw_input("Son las personas:\n>>1. Doctor y Doctor\n>>2. Paciente y paciente\n>>")
             if(opcion!="1" and opcion!="2" and opcion!="3"):
                 print "Ingrese una opcion valida"
                 newciclo=0
@@ -66,12 +69,6 @@ while(ciclo==0):
                     newciclo=1
                     ciclo = 0
                 elif(opcion=="2"):
-                    persona1 = raw_input("Ingrese el doctor a relacionar: ")
-                    persona2 = raw_input("Ingrese el paciente a relacionar: ")
-                    relacionDP(persona1,persona2)
-                    newciclo=1
-                    ciclo = 0
-                elif(opcion=="3"):
                     persona1 = raw_input("Ingrese el primer paciente a relacionar: ")
                     persona2 = raw_input("Ingrese el segundo paciente a relacionar: ")
                     relacionPP(persona1,persona2)

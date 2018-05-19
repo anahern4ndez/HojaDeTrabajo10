@@ -130,10 +130,9 @@ def queryEsp(especialidad):
     q = 'MATCH (u:Doctor) WHERE u.Especialidad = \"'+ especialidad +'\" RETURN u'
     resultados = driver.query(q, returns=(client.Node))
     if len(resultados) ==0:
-        print("\nNo hay doctores con esa especialidad")
+        print("\n-----> No hay doctores con esa especialidad")
     else:
         for r in resultados:
-            print("--> %s" % (r[0]["Nombre"]))
             doctores.append(r[0]["Nombre"])
         return doctores
 
@@ -143,7 +142,7 @@ def getConocidosPa(nombrePa):
     q = 'MATCH (u:Paciente)-[r:CONOCE]->(m:Paciente) WHERE u.Nombre=\"'+ nombrePa +'\" RETURN u, type(r), m'
     conocidos = driver.query(q, returns=(client.Node, str, client.Node))
     if len(conocidos) ==0:
-        print("\n La persona que ingreso no tiene conocidos :(")
+        print("\n-----> La persona que ingreso no tiene conocidos o no existe :(")
     else:
         for r in conocidos:
             conocidosL.append(r[2]["Nombre"])
@@ -174,7 +173,7 @@ def recomendacionConocidosPaciente(nombrePa, especialidad):
     doctores = queryEsp(especialidad) 
 
     if (listConocidos != None): #Si el paciente ingresado conoce a mas de alguien
-        for i in listConocidos:
+        for i in listConocidos: #se obtienen los conocidos de los conocidos del paciente
             w = 'MATCH (u:Paciente)-[r:CONOCE]->(m:Paciente) WHERE u.Nombre=\"'+ i +'\" RETURN m'
             conocidos2 = driver.query(q, returns=(client.Node))
             for cc in conocidos2:
@@ -195,6 +194,8 @@ def recomendacionConocidosPaciente(nombrePa, especialidad):
                 for found in recomendados1:
                     recomendados.append(found[1]["Nombre"])
         #Impresion de los doctores encontrados (aunque se repitan)
+        if (not recomendados):
+            print("\n-----> No se ha podido encontrar un doctor que algun conocido (o conocido del conocido) haya visitado")
         for s in recomendados:
             print("Nombre del Doctor: %s" %(s))            
             
