@@ -50,23 +50,81 @@ def visitaDP(paciente, doctor, fecha):
     #q = 'MATCH ("'+paciente+'")-[r:CONOCE]->("'+doctor+'") SET r.Fecha =\"'+fecha+'\" RETURN r'    
 
 def relacionPM(paciente, medicina):
-    paciente.relationships.create("TOMA", medicina)
+    q='MATCH (u:Paciente) WHERE u.Nombre="'+paciente+'"RETURN u'
+    pacientes = driver.query(q,returns=(client.Node,str,client.Node))
+    for p in pacientes:
+        print("(%s)" % (p[0]["Nombre"]))
+    p1=p[0]
+
+    r='MATCH (u:Medicina) WHERE u.Nombre="'+medicina+'"RETURN u'
+    medicinas = driver.query(r,returns=(client.Node,str,client.Node))
+    for r in medicinas:
+        print("(%s)" % (r[0]["Nombre"]))
+    med=r[0]
+    p1.relationships.create("TOMA", med)
 
 def relacionDM(doctor, medicina):
-    doctor.relationships.create("PRESCRIBE", medicina)
+    q='MATCH (u:Doctor) WHERE u.Nombre="'+doctor+'"RETURN u'
+    doctores = driver.query(q,returns=(client.Node,str,client.Node))
+    for p in doctores:
+        print("(%s)" % (p[0]["Nombre"]))
+    p1=p[0]
+
+    r='MATCH (u:Medicina) WHERE u.Nombre="'+medicina+'"RETURN u'
+    medicinas = driver.query(r,returns=(client.Node,str,client.Node))
+    for r in medicinas:
+        print("(%s)" % (r[0]["Nombre"]))
+    med=r[0]
+    p1.relationships.create("PRESCRIBE", med)
 
 def relacionPP(paciente, paciente1):
-    paciente.relationships.create("CONOCE", paciente1)
+    q='MATCH (u:Paciente) WHERE u.Nombre="'+paciente+'"RETURN u'
+    pacientes = driver.query(q,returns=(client.Node,str,client.Node))
+    for p in pacientes:
+        print("(%s)" % (p[0]["Nombre"]))
+    p1=p[0]
 
-def relacionDP(doctor, paciente1):
-    paciente1.relationships.create("CONOCE", doctor)
+    r='MATCH (u:Paciente) WHERE u.Nombre="'+paciente1+'"RETURN u'
+    pacientes2 = driver.query(r,returns=(client.Node,str,client.Node))
+    for r in pacientes2:
+        print("(%s)" % (r[0]["Nombre"]))
+    p2=r[0]
+    p1.relationships.create("CONOCE", p2)
+    p2.relationships.create("CONOCE",p1)
+
+def relacionDP(doctor, paciente):
+    q='MATCH (u:Paciente) WHERE u.Nombre="'+paciente+'"RETURN u'
+    pacientes = driver.query(q,returns=(client.Node,str,client.Node))
+    for p in pacientes:
+        print("(%s)" % (p[0]["Nombre"]))
+    p1=p[0]
+
+    r='MATCH (u:Doctor) WHERE u.Nombre="'+doctor+'"RETURN u'
+    doctores = driver.query(r,returns=(client.Node,str,client.Node))
+    for r in doctores:
+        print("(%s)" % (r[0]["Nombre"]))
+    d1=r[0]
+    d1.relationships.create("CONOCE", p1)
+    p1.relationships.create("CONOCE", d1)
     
 
 # ------------ QUERYS ---------------
 
 #Esta relacion va a servir para la segunda recomendacion
 def relacionDD(doctor, doctor1):
-    doctor.relationships.create("CONOCE", doctor1)
+    q='MATCH (u:Doctor) WHERE u.Nombre="'+doctor1+'"RETURN u'
+    doctores1 = driver.query(q,returns=(client.Node,str,client.Node))
+    for p in doctores1:
+        print("(%s)" % (p[0]["Nombre"]))
+    p1=p[0]
+
+    r='MATCH (u:Doctor) WHERE u.Nombre="'+doctor+'"RETURN u'
+    doctores = driver.query(r,returns=(client.Node,str,client.Node))
+    for r in doctores:
+        print("(%s)" % (r[0]["Nombre"]))
+    d1=r[0]
+    d1.relationships.create("CONOCE", p1)
+    p1.relationships.create("CONOCE", d1)
 
 #funcion que retorna todos los doctores que tienen cierta especialidad
 def queryEsp(especialidad):

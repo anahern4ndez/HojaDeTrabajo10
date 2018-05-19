@@ -59,16 +59,19 @@ while(ciclo==0):
                     persona1 = raw_input("Ingrese el primer doctor a relacionar: ")
                     persona2 = raw_input("Ingrese el segundo doctor a relacionar: ")
                     relacionDD(persona1,persona2)
+                    newciclo=1
                     ciclo = 0
                 elif(opcion=="2"):
                     persona1 = raw_input("Ingrese el doctor a relacionar: ")
                     persona2 = raw_input("Ingrese el paciente a relacionar: ")
                     relacionDP(persona1,persona2)
+                    newciclo=1
                     ciclo = 0
                 elif(opcion=="3"):
                     persona1 = raw_input("Ingrese el primer paciente a relacionar: ")
                     persona2 = raw_input("Ingrese el segundo paciente a relacionar: ")
                     relacionPP(persona1,persona2)
+                    newciclo=1
                     ciclo = 0
     elif(entrada=="6"):
         getConocidosPa("Juan")
