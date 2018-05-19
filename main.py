@@ -78,7 +78,8 @@ while(ciclo==0):
                     newciclo=1
                     ciclo = 0
     elif(entrada=="6"):
-        print "Feliz dia"
+        getConocidosPa("Juan")
+ #       print "Feliz dia"
         ciclo = 0
     else:
         print "Ingrese una opcion valida\n"
